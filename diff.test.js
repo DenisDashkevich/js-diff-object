@@ -64,6 +64,25 @@ describe("diff util spec", () => {
 		expect(diff(prev, next)).toEqual(expected);
 	});
 
+	it('should transfomr result with provided transform function in options', () => {
+		const prev = {
+			a: 12,
+			b: { s: { w: { q: "pabswq", l: [1, 2, 3, 4] } } }
+		};
+		const next = {
+			a: 12,
+			b: { s: { w: { q: "pabswq", l: [1, 2, 3, 2] } } }
+		};
+
+		const transform = (data) => ({ ...data, path: data.path.split('.') });
+
+		const options = { transform };
+
+		const expected = [{ path: ['b', 's', 'w', 'l', '3'], prev: 4, next: 2 }];
+
+		expect(diff(prev, next, options)).toEqual(expected);
+	});
+
 	it("should show diff for functions", () => {
 		const prev = {
 			a: 12,
