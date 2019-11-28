@@ -1,24 +1,30 @@
-function _diff(prev, next, path, lastPath, acc) {
-	var keys = Object.keys(next);
+function equal (prevValue, nextValue) {
+	return prevValue === nextValue;
+}
 
-	for (var i = 0; i < keys.length; i++) {
-		var key = keys[i];
+function transform (diffChunk) {
+	return diffChunk;
+}
+
+function _diff(prev, next, options, path, lastPath, acc) {
+	for (key in next) {
+		if (!next.hasOwnProperty(key)) {
+			continue;
+		}
 
 		var nextValue = next[key];
 		var prevValue = prev[key];
 
-		if (nextValue === prevValue) {
+		if (options.equal(prevValue, nextValue)) {
 			continue;
 		}
 
 		lastPath = path;
 		path = path + key;
 
-		var isObject = typeof nextValue === "object";
-
-		isObject
-			? acc.concat(_diff(prevValue, nextValue, path + ".", lastPath, acc))
-			: acc.push({ path: path, next: nextValue, prev: prevValue })
+		typeof nextValue === "object"
+			? acc.concat(_diff(prevValue, nextValue, options, path + ".", lastPath, acc))
+			: acc.push(options.transform({ path: path, next: nextValue, prev: prevValue }));
 
 		path = lastPath;
 	}
@@ -53,7 +59,19 @@ function diff(prev, next, options) {
 		throw new Error("One of the provided sources is invalid.");
 	}
 
-	return _diff(prev, next, "", "", []);
+	if (!options || typeof options !== 'object' || Object.prototype.toString.call(options) === '[object Array]') {
+		options = {};
+	}
+
+	if (!options.equal || typeof options.equal !== 'function') {
+		options.equal = equal;
+	}
+
+	if (!options.transform || typeof options.transform !== 'function') {
+		options.transform = transform;
+	}
+
+	return _diff(prev, next, options, "", "", []);
 }
 
 module.exports = diff;
