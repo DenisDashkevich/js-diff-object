@@ -8,6 +8,7 @@ function transform (diffChunk) {
 
 function _diff(prev, next, options, path, lastPath, acc) {
 	//this hack was made to respect missing fields, btw it is hugely increse complexity. :(
+	// TODO: it would be nice, to reduce this both source traversal to pick up source to observe.
 	var prevKeysCount = 0;
 	var nextKeysCount = 0;
 

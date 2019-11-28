@@ -229,19 +229,19 @@ describe("diff util spec", () => {
 			b: {
 				d: {
 					q: 11,
-					l: { d: 12 },
+					l: { d: 12 }
 				},
-				c: 12,
-			},
+				c: 12
+			}
 		};
 		const next = {
 			a: 12,
 			b: {
 				d: { q: 11 },
 				c: 12,
-				a: 13,
+				a: 13
 			},
-			f: { q: { w: 17 } },
+			f: { q: { w: 17 } }
 		};
 
 		const expected = [
