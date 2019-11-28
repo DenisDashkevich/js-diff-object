@@ -54,9 +54,4 @@ function diff(prev, next) {
 	return _diff(prev, next, "", [], "");
 }
 
-// const prev = { a: 12, b: { s: { w: { q: 'pabswq', l: [1,2,3,4] } } }, l: () => {}, q: { d: [{ a: 12, b: () => {} }, { b: { s: { w: { q: 'pabswq', l: [1,2,3,4] } } } }] } };
-// const next = { a: 12, b: { s: { w: { q: 'pabswq', l: [1,2,3,4] } } }, l: () => {}, q: { d: [{ a: 12, b: () => {} }, { b: { s: { w: { q: 'pabswq', l: [1,2,3,2] } } } }] } };
-
-// console.log(JSON.stringify(diff(prev, next)));
-
 module.exports = diff;
