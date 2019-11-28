@@ -71,7 +71,9 @@ const prevWithMissingFields = {
 	b: {
 		d: {
 		    q: 11,
-			l: { d: 12 }
+			l: { 
+				d: 12,
+			}
 		},
 	    c: 12,
 	},
