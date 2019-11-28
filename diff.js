@@ -1,4 +1,4 @@
-function equal (prevValue, nextValue) {
+function equals (prevValue, nextValue) {
 	return prevValue === nextValue;
 }
 
@@ -6,40 +6,49 @@ function transform (diffChunk) {
 	return diffChunk;
 }
 
+function isObject (source) {
+	return typeof source === 'object';
+}
+
+function isFunction (source) {
+	return typeof source === 'function';
+}
+
+function isArray (source) {
+	return Object.prototype.toString.call(source) === '[object Array]';
+}
+
+function traverse (source, cb) {
+	for (key in source) {
+		if (!source.hasOwnProperty(key)) {
+			continue;
+		}
+
+		cb(key);
+	}
+}
+
+function count (source) {
+	if (isArray(source)) {
+		return source.length;
+	}
+
+	var acc = 0;
+
+	traverse(source, function () { acc += 1; });
+
+	return acc;
+}
+
 function _diff(prev, next, options, path, lastPath, acc) {
-	//this hack was made to respect missing fields, btw it is hugely increse complexity. :(
+	// Double <count> was made to respect missing fields, btw it is hugely increse complexity. :(
 	// TODO: it would be nice, to reduce this both source traversal to pick up source to observe.
-	var prevKeysCount = 0;
-	var nextKeysCount = 0;
-
-	for (key in prev) {
-		if (!prev.hasOwnProperty(key)) {
-			continue;
-		}
-
-		prevKeysCount += 1;
-	}
-
-	for (key in next) {
-		if (!next.hasOwnProperty(key)) {
-			continue;
-		}
-
-		nextKeysCount += 1;
-	}
-
-	var sourceToObserve = prevKeysCount > nextKeysCount ? prev : next;
-
-	for (key in sourceToObserve) {
-		if (!sourceToObserve.hasOwnProperty(key)) {
-			continue;
-		}
-
+	traverse(count(prev) > count(next) ? prev : next, function (key) {
 		var nextValue = next[key];
 		var prevValue = prev[key];
 
-		if (options.equal(prevValue, nextValue)) {
-			continue;
+		if (options.equals(prevValue, nextValue)) {
+			return;
 		}
 
 		lastPath = path;
@@ -50,7 +59,7 @@ function _diff(prev, next, options, path, lastPath, acc) {
 			: acc.concat(_diff(prevValue, nextValue, options, path + ".", lastPath, acc));
 
 		path = lastPath;
-	}
+	});
 
 	return acc;
 }
@@ -71,26 +80,27 @@ function diff(prev, next, options) {
 		throw new Error("One of the provided sources is not provided.");
 	}
 
-	var prevType = typeof prev;
-	var nextType = typeof next;
-
-	if (prevType !== "object" && nextType !== "object") {
+	if (!isObject(prev) && !isObject(next)) {
 		throw new Error("Both sources are invalid.");
 	}
 
-	if (prevType !== "object" || nextType !== "object") {
+	if (!isObject(prev) || !isObject(next)) {
 		throw new Error("One of the provided sources is invalid.");
 	}
 
-	if (!options || typeof options !== 'object' || Object.prototype.toString.call(options) === '[object Array]') {
+	if ((isArray(prev) && !isArray(next)) || (!isArray(prev) && isArray(next))) {
+		throw new Error('Both sources should be the same type.');
+	}
+
+	if (!options || !isObject(options) || isArray(options)) {
 		options = {};
 	}
 
-	if (!options.equal || typeof options.equal !== 'function') {
-		options.equal = equal;
+	if (!options.equals || !isFunction(options.equals)) {
+		options.equals = equals;
 	}
 
-	if (!options.transform || typeof options.transform !== 'function') {
+	if (!options.transform || !isFunction(options.equals)) {
 		options.transform = transform;
 	}
 

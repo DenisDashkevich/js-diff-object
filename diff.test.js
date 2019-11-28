@@ -22,6 +22,23 @@ describe("diff util spec", () => {
 		expect(() => diff(1, {})).toThrow();
 	});
 
+	it("should throw an error if provided sources are not the same type", () => {
+		expect(() => diff([], {})).toThrow();
+		expect(() => diff({}, [])).toThrow();
+	});
+
+	it("should show diff for arrays", () => {
+		const prev = [{ a: 12 }, { a: 13 }];
+		const next = [{ a: 14 }, { a: 17 }];
+
+		const expected = [
+			{ path: "0.a", prev: 12, next: 14 },
+			{ path: '1.a', prev: 13, next: 17 },
+		];
+
+		expect(diff(prev, next)).toEqual(expected);
+	});
+
 	it("should show diff for provided sources", () => {
 		const prev = { a: 12 };
 		const next = { a: 13 };
