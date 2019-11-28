@@ -1,14 +1,11 @@
-function _diff(prev, next, path, acc, lastPath) {
+function _diff(prev, next, path, lastPath, acc) {
 	var keys = Object.keys(next);
-
-	var nextValue;
-	var prevValue;
 
 	for (var i = 0; i < keys.length; i++) {
 		var key = keys[i];
 
-		nextValue = next[key];
-		prevValue = prev[key];
+		var nextValue = next[key];
+		var prevValue = prev[key];
 
 		if (nextValue === prevValue) {
 			continue;
@@ -19,19 +16,24 @@ function _diff(prev, next, path, acc, lastPath) {
 
 		var isObject = typeof nextValue === "object";
 
-		if (!isObject) {
-			acc.push({ path: path, next: nextValue, prev: prevValue });
-			path = lastPath;
-		} else {
-			acc.concat(_diff(prevValue, nextValue, path + ".", acc, lastPath));
-			path = lastPath;
-		}
+		isObject
+			? acc.concat(_diff(prevValue, nextValue, path + ".", lastPath, acc))
+			: acc.push({ path: path, next: nextValue, prev: prevValue })
+
+		path = lastPath;
 	}
 
 	return acc;
 }
 
-function diff(prev, next) {
+/**
+ * Diff two object sources and give output as array of changes
+ * @param {Object} prev - prev source
+ * @param {Object} next - next source
+ * @param {Object} options - options
+ * @returns {Array<Object>}
+ */
+function diff(prev, next, options) {
 	if (!prev && !next) {
 		throw new Error("No sources found. Please provided both sources.");
 	}
@@ -51,7 +53,7 @@ function diff(prev, next) {
 		throw new Error("One of the provided sources is invalid.");
 	}
 
-	return _diff(prev, next, "", [], "");
+	return _diff(prev, next, "", "", []);
 }
 
 module.exports = diff;
