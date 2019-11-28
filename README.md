@@ -1,7 +1,8 @@
+# Js-diff
 ##### Js-diff is a small util to diff two sources.
 ###### Hi, you are welcome to contribute :)
 ### Usage:
-###### for more usage examples, please visit: `diff.test.js` file.
+###### For more usage examples, please visit: `diff.test.js` file.
 
 - ##### Objects:
 ```js
@@ -78,28 +79,12 @@ const prevToNextDiff = diff(prevArr, nextArr);
 ```js
 const prev = {
 	a: 12,
-	b: {
-		d: {
-		    q: 11,
-			l: { 
-				d: 12,
-			}
-		},
-	    c: 12,
-	},
+	b: { d: { q: 11, l: { d: 12 } }, c: 12 },
 };
 const next = {
 	a: 12,
-	b: {
-		d: { q: 11 },
-		c: 12,
-		a: 13
-	},
-	f: { 
-	    q: { 
-	        w: 17,
-	   },
-	},
+	b: { d: { q: 11 }, c: 12, a: 13 },
+	f: { q: { w: 17 } },
 };
 
 const prevToNext = diff(prevWithMissingFields, nextWithMissingFields);
@@ -134,7 +119,9 @@ const prevToNext = diff(prev, next, options);
 ```
 
 ### Options:
-| Name         | Type         | Default | Description |
-|:-------------:|:-------------:|:-----:|:------------:|
-| equals      | Function | `(prevVal, nextVal) => prevVal === nextVal;` | Function to compare provided values. Arguments: `prevVal: <any>`, `nextVal: <any>`
-| transform | Function | `(diffChunk) => diffChunk` | Function to transform provided diff chunk. Will be called before actul push to result array. `NOTE: it should return value.` Arguments: `diffChunk - <{ path: <String>, next: <any>, prev: <any> }>`
+| Name         | Type         | Description |
+|:-------------:|:-------------:|:------------:|
+| equals      | Function | Function to compare provided values. Arguments: `prevVal: <any>`, `nextVal: <any>` Default: `(prevVal, nextVal) => prevVal === nextVal;`.
+| transform | Function | Function to transform provided diff chunk. Will be called before actul push to result array. `NOTE: it should return value.` Arguments: `diffChunk - <{ path: <String>, next: <any>, prev: <any> }>` Default: `(diffChunk) => diffChunk`.
+
+#### have a nice day :)
