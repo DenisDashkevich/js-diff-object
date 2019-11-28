@@ -7,8 +7,30 @@ function transform (diffChunk) {
 }
 
 function _diff(prev, next, options, path, lastPath, acc) {
+	//this hack was made to respect missing fields, btw it is hugely increse complexity. :(
+	var prevKeysCount = 0;
+	var nextKeysCount = 0;
+
+	for (key in prev) {
+		if (!prev.hasOwnProperty(key)) {
+			continue;
+		}
+
+		prevKeysCount += 1;
+	}
+
 	for (key in next) {
 		if (!next.hasOwnProperty(key)) {
+			continue;
+		}
+
+		nextKeysCount += 1;
+	}
+
+	var sourceToObserve = prevKeysCount > nextKeysCount ? prev : next;
+
+	for (key in sourceToObserve) {
+		if (!sourceToObserve.hasOwnProperty(key)) {
 			continue;
 		}
 
@@ -22,9 +44,9 @@ function _diff(prev, next, options, path, lastPath, acc) {
 		lastPath = path;
 		path = path + key;
 
-		typeof nextValue === "object"
-			? acc.concat(_diff(prevValue, nextValue, options, path + ".", lastPath, acc))
-			: acc.push(options.transform({ path: path, next: nextValue, prev: prevValue }));
+		(nextValue && !prevValue) || (prevValue && !nextValue) || typeof nextValue !== "object"
+			? acc.push(options.transform({ path: path, next: nextValue, prev: prevValue }))
+			: acc.concat(_diff(prevValue, nextValue, options, path + ".", lastPath, acc));
 
 		path = lastPath;
 	}

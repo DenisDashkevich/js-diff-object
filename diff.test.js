@@ -64,7 +64,7 @@ describe("diff util spec", () => {
 		expect(diff(prev, next)).toEqual(expected);
 	});
 
-	it('should transfomr result with provided transform function in options', () => {
+	it("should transfomr result with provided transform function in options", () => {
 		const prev = {
 			a: 12,
 			b: { s: { w: { q: "pabswq", l: [1, 2, 3, 4] } } }
@@ -74,11 +74,13 @@ describe("diff util spec", () => {
 			b: { s: { w: { q: "pabswq", l: [1, 2, 3, 2] } } }
 		};
 
-		const transform = (data) => ({ ...data, path: data.path.split('.') });
+		const transform = data => ({ ...data, path: data.path.split(".") });
 
 		const options = { transform };
 
-		const expected = [{ path: ['b', 's', 'w', 'l', '3'], prev: 4, next: 2 }];
+		const expected = [
+			{ path: ["b", "s", "w", "l", "3"], prev: 4, next: 2 }
+		];
 
 		expect(diff(prev, next, options)).toEqual(expected);
 	});
@@ -216,6 +218,36 @@ describe("diff util spec", () => {
 			{ path: "q.d.2.b.s.w.c.f.d.1.b.s.w.l.3", prev: 4, next: 2 },
 			{ path: "q.d.2.b.s.w.c.f.d.2.b.s.w.l.3", prev: 2, next: 3 },
 			{ path: "q.d.2.b.s.w.c.f.d.2.b.s.w.c.lol", prev: 12, next: 13 }
+		];
+
+		expect(diff(prev, next)).toEqual(expected);
+	});
+
+	it("should show as diff missing fieds", () => {
+		const prev = {
+			a: 12,
+			b: {
+				d: {
+					q: 11,
+					l: { d: 12 },
+				},
+				c: 12,
+			},
+		};
+		const next = {
+			a: 12,
+			b: {
+				d: { q: 11 },
+				c: 12,
+				a: 13,
+			},
+			f: { q: { w: 17 } },
+		};
+
+		const expected = [
+			{ path: "b.d.l", prev: prev.b.d.l, next: undefined },
+			{ path: "b.a", prev: undefined, next: 13 },
+			{ path: "f", prev: undefined, next: next.f }
 		];
 
 		expect(diff(prev, next)).toEqual(expected);
