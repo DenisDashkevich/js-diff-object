@@ -240,7 +240,7 @@ describe("diff util spec", () => {
 		expect(diff(prev, next)).toEqual(expected);
 	});
 
-	it("should show as diff missing fieds", () => {
+	it("should show diff for missing fieds", () => {
 		const prev = {
 			a: 12,
 			b: {
@@ -269,4 +269,20 @@ describe("diff util spec", () => {
 
 		expect(diff(prev, next)).toEqual(expected);
 	});
+
+	it("should show diff if type of the field was changed", () => {
+		const prev = {
+			c: 12,
+			l: { a: { x: 12 } },
+		};
+
+		const next = {
+			c: 12,
+			l: { a: 'changedType' },
+		};
+
+		const expected = [{ path: 'l.a', prev: prev.l.a, next: next.l.a  }];
+
+		expect(diff(prev, next)).toEqual(expected);
+	})
 });

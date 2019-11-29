@@ -54,9 +54,9 @@ function _diff(prev, next, options, path, lastPath, acc) {
 		lastPath = path;
 		path = path + key;
 
-		(nextValue && !prevValue) || (prevValue && !nextValue) || !isObject(nextValue)
-			? acc.push(options.transform({ path: path, next: nextValue, prev: prevValue }))
-			: acc.concat(_diff(prevValue, nextValue, options, path + ".", lastPath, acc));
+		isObject(nextValue) && isObject(prevValue)
+			? acc.concat(_diff(prevValue, nextValue, options, path + ".", lastPath, acc))
+			: acc.push(options.transform({ path: path, next: nextValue, prev: prevValue }));
 
 		path = lastPath;
 	});
