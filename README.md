@@ -1,5 +1,5 @@
 # Js-diff
-##### Js-diff is a small util to diff two sources.
+##### Js-diff is a small util to diff two sources. Written in pure `ES3`, so it should work even in really old browsers.
 ###### Hi, you are welcome to contribute :)
 ### Usage:
 ###### For more usage examples, please visit: `diff.test.js` file.
